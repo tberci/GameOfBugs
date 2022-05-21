@@ -36,6 +36,8 @@ var bullet_array = [];
 var num = 0;
 var score = 0;
 var shoot_speed = 0;
+var walls = [];
+
 
 const fs = require('fs');
 
@@ -60,6 +62,8 @@ io.on('connection', (socket) => {
     } else {
       io.emit('startGame');
       io.emit('admin', "@Admin : The game has started");
+
+    
     }
   });
 
@@ -106,9 +110,6 @@ io.on('connection', (socket) => {
 
       console.log("A new row has been created");
     });
-
-    
-
 
     for (i in players) {
 
@@ -231,6 +232,8 @@ io.on('connection', (socket) => {
 
   });
 
+  
+
 });
 
 
@@ -241,9 +244,9 @@ function updateBullet() {
     bullet = bullet_array[i];
 
     if (bullet.dir == "up") {
-      bullet.y += 5;
+      bullet.y += parseInt(shoot_speed);
     } else if (bullet.dir == "down") {
-      bullet.y -= 5;
+      bullet.y -= parseInt(shoot_speed);;
     }
     //kimegy akkor törlődik. (bugos)
     /*if ( bullet.y > 400 || bullet.y < 0 ) {
@@ -271,6 +274,7 @@ function updateBullet() {
           player.kills++;
           console.log(player.kills + "" +player.name)
           io.emit('admin', "@Admin " + player.name + "was hit");
+          delete players[id];
           let sql = 'UPDATE players SET score=? WHERE name=?';
           db.run(sql, [player.kills, bullet.owner_name], (err) => {
             if (err) return console.error(err.message);
@@ -278,7 +282,7 @@ function updateBullet() {
             console.log("Score is updated");
           });
 
-          sql = 'SELECT * FROM players';
+          sql = 'SELECT * FROM players ORDER BY score';
 
           db.all(sql, [], (err, rows) => {
             if (err) return console.error(err.message);
@@ -293,10 +297,27 @@ function updateBullet() {
           //player.hp--;
         }
 
-        if (player.hp <= 0) {
-          //delete players[id];
-        }
+
+        if (bullet.x < 570 + 30 && 
+          bullet.x + bullet.w > 570  &&
+          bullet.y < 360 + 10 && 
+          bullet.y + bullet.h > 360) {
+
+            bullet_array.splice(i, 1);
+             i--;
+          }
+
+          if (bullet.x < 1 + 30 && 
+            bullet.x + bullet.w > 1  &&
+            bullet.y < 40 + 10 && 
+            bullet.y + bullet.h > 40) {
+  
+              bullet_array.splice(i, 1);
+               i--;
+            }
       }
+
+
     }
   }
   io.emit('bupdate', bullet_array);

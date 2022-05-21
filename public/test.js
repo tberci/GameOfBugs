@@ -14,11 +14,11 @@ background.onload = function () {
 
 class Obstackle {
 
-  constructor(x, y) {
+  constructor(x, y, width) {
     this.x = x;
     this.y = y;
     this.height = 10;
-    this.width = canvas.width;
+    this.width = width;
 
   }
 
@@ -39,6 +39,7 @@ class Bullet {
     this.y = y;
     this.height = 20;
     this.width = 3;
+    
 
   }
   move() {
@@ -154,7 +155,7 @@ class Player {
       console.log("fireeeee");
       //socket.emit('addBullet', 1);
 
-      socket.emit('addBullet', { x: this.x, y: this.y, w: 3, h: 20, dir: 'up' });
+      socket.emit('addBullet', { x: this.x, y: this.y, w: 3, h: 20, dir: 'up' , count: 6});
     }
   };
 
@@ -184,7 +185,13 @@ var socket = io();
 var color;
 
 var g = new Player(0, 0, color, socket.id);
-var obstackle = new Obstackle(0, canvas.height / 2)
+var obstackle = new Obstackle(0, canvas.height / 2, canvas.width)
+
+var wall1= new Obstackle(570,360, 30);
+var wall2 =  new Obstackle(1,40, 30);
+
+socket.emit("wall", {x1 : wall1.x, y1 : wall1.y, x2 : wall2.x, y2: wall2.y} )
+
 
 socket.on('new player', function (data) {
   g.x = data.x;
@@ -214,7 +221,8 @@ socket.on('state', function (players) {
   //console.log(players);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   obstackle.draw(ctx);
-
+  wall1.draw(ctx);
+  wall2.draw(ctx);
   for (var i in players) {
 
     g.x = players[i].x;
@@ -290,16 +298,21 @@ socket.on('chatter', function (msg) {
 //új rekord a html táblába
 socket.on("table", function (data) {
   
-  var table = document.getElementById( 'score_board' ),
-  row = table.insertRow(1),
-  cell1 = row.insertCell(0),
+  
+  var table = document.getElementById( 'score_board' );
+  
+  row = table.insertRow(1);
+  cell1 = row.insertCell(0);
   cell2 = row.insertCell(1);
 
   cell1.innerHTML = data.name;
   cell2.innerHTML =  data.score;
-
+  
   row.style.textAlign = 'center';
-
+ 
+  cell1.parentNode.replaceChild(data.name, cell1);
+  cell2.parentNode.replaceChild(data.score, cell2);
+ 
 });
 
 socket.on('redirect', function (destination) {
@@ -310,4 +323,9 @@ socket.on('redirect', function (destination) {
 socket.on('killed', function (destination) {
   //alert("You died!");
   window.location.href = destination;
+});
+
+
+socket.on('wall', function (data) {
+
 });
