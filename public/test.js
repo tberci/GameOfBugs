@@ -75,7 +75,9 @@ class Player {
     this.shootPressed = false;
     this.isDead = false;
     this.id = id;
-
+    this.fire = false;
+    this.bullets = 6;
+    this.reload = 0;
 
     this.movement = {
       up: false,
@@ -86,6 +88,7 @@ class Player {
     };
     document.addEventListener("keydown", this.keydown);
     document.addEventListener("keyup", this.keyup);
+    
   }
 
   draw(ctx) {
@@ -136,47 +139,80 @@ class Player {
 
   };
 
+  displayText(){
+    ctx.font = "25px Arial";
+    ctx.fillText("bullets: " +this.bullets,canvas.width -110,30);  
+
+  };
+
   keydown = (e) => {
-    if (e.code === "ArrowUp") {
+    if (e.keyCode == 38) {
       this.movement.up = true;
     }
-    if (e.code === "ArrowDown") {
+    if (e.keyCode == 40) {
       this.movement.down = true;
     }
-    if (e.code === "ArrowLeft") {
+    if (e.keyCode == 37) {
       this.movement.left = true;
     }
-    if (e.code === "ArrowRight") {
+    if (e.keyCode == 39) {
       this.movement.right = true;
 
     }
-    if (e.code === "Space") {
+
+    if (e.keyCode == 82) {
+      this.reload ++;
+      console.log(this.reload);
+
+      if (this.reload == 4){
+        this.fire = true;
+        this.bullets = 6;
+        this.reload = 0;
+      }
+    
+    }
+
+    if (e.keyCode == 32) {
 
       console.log("fireeeee");
       //socket.emit('addBullet', 1);
+      this.fire = true;
+      if(this.fire == true){
+        this.bullets--;
+        console.log(this.bullets);
+        if(this.bullets < 0){
+          this.fire = false;
+          this.bullets = 0;
+        }else{
+          socket.emit('addBullet', { x: this.x, y: this.y, w: 3, h: 20, dir: 'up'});
+        }
+        
+       
+      }
 
-      socket.emit('addBullet', { x: this.x, y: this.y, w: 3, h: 20, dir: 'up' , count: 6});
+      
     }
   };
+  
 
   keyup = (e) => {
-    if (e.code === "ArrowUp") {
+    if (e.keyCode == 38) {
       this.movement.up = false;
     }
-    if (e.code === "ArrowDown") {
+    if (e.keyCode == 40) {
       this.movement.down = false;
     }
-    if (e.code === "ArrowLeft") {
+    if (e.keyCode == 37) {
       this.movement.left = false;
     }
-    if (e.code === "ArrowRight") {
+    if (e.keyCode == 39) {
       this.movement.right = false;
     }
-    if (e.code === "Space") {
+    if (e.keyCode == 32) {
       this.shootPressed = false;
       console.log("fire stopped");
       //  socket.emit('addBullet', 0);
-
+      this.fire = false;
     }
   };
 }
@@ -192,13 +228,11 @@ var wall2 =  new Obstackle(1,40, 30);
 
 socket.emit("wall", {x1 : wall1.x, y1 : wall1.y, x2 : wall2.x, y2: wall2.y} )
 
-
 socket.on('new player', function (data) {
   g.x = data.x;
   g.y = data.y;
 
 });
-
 
 setInterval(function () {
   socket.emit('movement', g.movement);
@@ -216,13 +250,15 @@ socket.on('bupdate', function (projectileData) {
 });
 
 
-
 socket.on('state', function (players) {
   //console.log(players);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   obstackle.draw(ctx);
   wall1.draw(ctx);
-  wall2.draw(ctx);
+  wall2.draw(ctx); 
+
+  g.displayText();
+ 
   for (var i in players) {
 
     g.x = players[i].x;
@@ -230,16 +266,11 @@ socket.on('state', function (players) {
 
     ctx.fillStyle = players[i].color;
 
-
+    
     g.draw(ctx);
     g.shoot();
 
-
-
-
   }
-
-
 });
 
 
