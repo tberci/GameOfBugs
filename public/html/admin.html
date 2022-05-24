@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="/socket.io/socket.io.js"></script>
+
+</head>
+
+<body>
+
+    <h1> ADMIN PLS</h1>
+
+    <button id="restart" onclick="restartGame()">Start</button>
+
+    <table id ="score_board" style ="border:black 1px solid"  background="wood.jpg">
+   
+        <tr>
+            <th><h2>Name</h2></th>
+            <th><h2>Score</h2></th>
+        </tr>
+        <tr>
+            <td id="1"><h2></h2></td>
+            <td id="2"><h2></h2></td>
+        </tr>
+    
+    </table>
+
+    <form id="form" action="">
+        <input id="input" autocomplete="off"  /><button>Send</button>
+    </form> 
+
+    
+
+    <script src="js/admin.js"></script>
+    </div>

@@ -1,0 +1,69 @@
+body{
+    background-color: red;
+}
+
+h1{
+    text-align: center;
+    color:white;
+}
+
+canvas{
+    position: absolute;
+    background: url('../resources/grass.jpeg');
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    width: 50%;
+
+  
+}
+
+p{
+    color:black;
+    left : 0;
+}
+
+#chatDiv{
+    position : absolute;
+    top : 100px;
+    width : 300px;
+    overflow: auto;
+    background-color: rgb(149, 138, 138);
+    height: 475px;
+    left: 30px;
+
+}
+
+#startDiv{
+    width: 100px;
+    height: 100px;
+    
+    position: absolute;
+    top:10px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    
+    margin: auto;
+}
+
+
+#score_board {
+    
+  position: absolute;
+  background-image: url('../resources/wood.jpg');
+  width: 300px;
+  height: 515px;
+  top : 80px;
+  margin: auto;
+  right: 10px;
+  color: green;
+  
+}
+
+#box{
+    width: 350px;
+    height: 515px;
+    background-image: url('../resources/wood.jpg');
+}

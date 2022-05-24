@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="css/index.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+</head>
+
+<body">
+
+<h1> WELLCOME TO THE GAME OF BUGS</h1>
+
+<canvas id="canvas1" style="border:1px solid #d3d3d3; display:none ; ">
+    Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+
+ <p id="response"></p>
+ 
+<div id ="box">
+    <h2 style="left: 20px;">Chat</h2>
+    <div id="chatDiv">
+        
+    <ul id="messages"></ul>
+   
+    </div> 
+</div>
+
+<div id ="scoreBox">
+    <table id ="score_board" style ="border:black 1px solid">
+   
+        <tr>
+            <th><h2>Name</h2></th>
+            <th><h2>Score</h2></th>
+        </tr>
+        <tr>
+            <td id="1"><h2></h2></td>
+            <td id="2"><h2></h2></td>
+        </tr>
+
+    </table>
+</div>
+<form id="form" action="" style="display:none">
+        <input id="input" autocomplete="off"  /><button>Send</button>
+</form> 
+
+<div id="startDiv">
+    <h2>Name : </h2><input id="nameInput" autocomplete="off" />
+<button id="startButton" >Start</button>
+</div>
+
+ 
+
+
+
+<script type="module" src="js/test.js"></script>
+</body>
+
+
+</html>

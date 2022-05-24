@@ -1,13 +1,12 @@
-const { Socket } = require('engine.io');
+
 const express = require('express');
 const app = express();
 const http = require('http');
-const { SocketAddress } = require('net');
+
 const { join } = require('path');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const { SocksClient } = require('socks');
-const { PassThrough } = require('stream');
+
 const io = new Server(server);
 const sqlite3 = require('sqlite3').verbose();
 
@@ -21,11 +20,11 @@ db.run('DELETE FROM players');
 app.use(express.static('public'));
 
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/public/html/index.html');
 });
 
 app.get('/admin', function (req, res) {
-  res.sendFile(__dirname + '/public/admin.html');
+  res.sendFile(__dirname + '/public/html/admin.html');
 });
 
 var playersTop = [];
@@ -36,7 +35,7 @@ var bullet_array = [];
 var num = 0;
 var score = 0;
 var shoot_speed = 0;
-var walls = [];
+var bullet_count = 6;
 
 
 const fs = require('fs');
@@ -56,23 +55,24 @@ io.on('connection', (socket) => {
   });
 
 
-  socket.on('startGame', () => {
+  socket.on('startGame', function () {
     if (currentClients < 2) {
-      io.emit('admin', "@Admin : waiting for other players");
+      io.emit('admin', "@Server : waiting for other players");
     } else {
       io.emit('startGame');
-      io.emit('admin', "@Admin : The game has started");
+      io.emit('admin', "@Server : The game has started");
 
     
     }
   });
 
   const colorString = "#" + Math.floor(Math.random() * 16777215).toString(16);
+
   socket.on('new player', function (data) {
     num++;
     console.log("játékosok száma : " + num);
     console.log(socket.id);
-    io.emit('admin', "@Admin : " + data.name + " has joined!");
+    io.emit('admin', "@Server : " + data.name + " has joined!");
 
     console.log(data.name);
 
@@ -210,16 +210,16 @@ io.on('connection', (socket) => {
 
   });
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect',function () {
     // if(players[socket.id].name == undefined) return;
-    io.emit('admin', "@Admin :", "A user has disconnected!");
+    io.emit('admin', "@Server :", "A user has disconnected!");
 
     delete players[socket.id];
 
 
   });
 
-  socket.on('restart', function () {
+  socket.on('restart', function ()  {
 
     io.emit('admin', "The admin has restarted the game");
     for (var i in players)
@@ -227,7 +227,7 @@ io.on('connection', (socket) => {
       delete players[i];
 
 
-    var destination = '/index.html';
+    var destination = "/";
     io.emit('redirect', destination);
 
   });
@@ -267,13 +267,13 @@ function updateBullet() {
 
           player.hit = true;
 
-          var destination = '/index.html';
+          var destination = '/';
           io.to(player.id).emit('killed', destination);
 
           console.log("" + player.name + " was hit by " + bullet.owner_name);
           player.kills++;
           console.log(player.kills + "" +player.name)
-          io.emit('admin', "@Admin " + player.name + "was hit");
+          io.emit('admin', "@Server " + player.name + "was hit");
           delete players[id];
           let sql = 'UPDATE players SET score=? WHERE name=?';
           db.run(sql, [player.kills, bullet.owner_name], (err) => {
@@ -291,7 +291,7 @@ function updateBullet() {
               console.log(row);
               io.emit('table', { name: row.name, score: row.score });
             })
-          })
+          });
 
           //score++;
           //player.hp--;
